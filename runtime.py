@@ -61,7 +61,7 @@ stk_dict = safe_load(stk_yaml)
 if VERBOSE is not None:
     print("- stk.yaml:", stk_dict)
 
-stk_yaml_type = stk_dict["spec"]["kind"]
+stk_yaml_type = stk_dict["spec"]["type"]
 app_or_infra_id = stk_dict["spec"]["infra-id"] if stk_yaml_type == "infra" else stk_dict["spec"]["app-id"]
 
 print(f"{stk_yaml_type} project identified, with ID: {app_or_infra_id}")
