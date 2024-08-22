@@ -86,7 +86,7 @@ if r1.status_code == 200:
     request_data = {
         "appId": app_or_infra_id if stk_yaml_type != "infra" else None,
         "infraId": app_or_infra_id if stk_yaml_type == "infra" else None,
-        "env": ENVIRONMENT,
+        "envId": ENVIRONMENT,
         "tag": VERSION_TAG,
         "config": {
             "tfstate": {
