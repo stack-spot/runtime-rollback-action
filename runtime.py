@@ -36,6 +36,30 @@ def build_pipeline_url() -> str:
     return url
 
 
+def get_env_id(slug, access_token):
+    workspace_url = "https://workspace-workspace-api.stg.stackspot.com/v1/environments"
+    deploy_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    env_request = requests.get(
+        url=workspace_url, 
+        headers=deploy_headers, 
+    )
+    
+    if env_request.status_code != 200:
+        print("Unable to fetch Environments data")
+        print("- Status:", r1.status_code)
+        print("- Error:", r1.reason)
+        print("- Response:", r1.text)
+        exit(1)
+    
+    env_list = env_request.json()
+    
+    for env in env_list:
+        if env["name"] == slug:
+            return env["id"]
+        
+    print(f"Unable to find environment: {slug}")
+    exit(1)
+
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_KEY = os.getenv("CLIENT_KEY")
 CLIENT_REALM = os.getenv("CLIENT_REALM")
@@ -91,7 +115,7 @@ if r1.status_code == 200:
 
     request_data = {
         **stk_id,
-        "envId": ENVIRONMENT,
+        "envId": get_env_id(ENVIRONMENT, access_token),
         "tag": VERSION_TAG,
         "config": {
             "tfstate": {
