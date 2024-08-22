@@ -67,7 +67,7 @@ app_or_infra_id = stk_dict["spec"]["infra-id"] if stk_yaml_type == "infra" else 
 
 print(f"{stk_yaml_type} project identified, with ID: {app_or_infra_id}")
 
-iam_url = f"https://auth.stackspot.com/{CLIENT_REALM}/oidc/oauth/token"
+iam_url = f"https://iam-auth-ssr.stg.stackspot.com/{CLIENT_REALM}/oidc/oauth/token"
 iam_headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 iam_data = {"client_id": f"{CLIENT_ID}", "grant_type": "client_credentials", "client_secret": f"{CLIENT_KEY}"}
 
@@ -112,14 +112,14 @@ if r1.status_code == 200:
     print("Deploying Self-Hosted Rollback..")
 
     if stk_yaml_type == 'app':
-        self_hosted_rollback_app_url = "https://runtime-manager.v1.stackspot.com/v1/run/self-hosted/rollback/app"
+        self_hosted_rollback_app_url = "https://runtime-manager.stg.stackspot.com/v1/run/self-hosted/rollback/app"
         rollback_request = requests.post(
                 url=self_hosted_rollback_app_url,
                 headers=deploy_headers,
                 data=request_data
             )
     elif stk_yaml_type == 'infra':
-        self_hosted_rollback_infra_url = "https://runtime-manager.v1.stackspot.com/v1/run/self-hosted/rollback/infra"
+        self_hosted_rollback_infra_url = "https://runtime-manager.stg.stackspot.com/v1/run/self-hosted/rollback/infra"
         rollback_request = requests.post(
                 url=self_hosted_rollback_infra_url,
                 headers=deploy_headers,
