@@ -1,6 +1,6 @@
-# runtime-manager-action
+# runtime-rollback-action
 
-GitHub action to authenticate and consume StackSpot Runtime API.
+GitHub action to authenticate and consume StackSpot Runtime API to perform self-hosted rollback to a target version or tag.
 
 _**Note**: This action is supported on all runners operating systems (`ubuntu`, `macos`, `windows`)_
 
@@ -14,7 +14,7 @@ To get the account keys (`CLIENT_ID`, `CLIENT_KEY` and `CLIENT_REALM`), please l
 
 ```yaml
     steps:
-      - uses: stack-spot/runtime-manager-action@v2.1
+      - uses: stack-spot/runtime-rollback-action@v1
         id: run
         with:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -28,9 +28,6 @@ To get the account keys (`CLIENT_ID`, `CLIENT_KEY` and `CLIENT_REALM`), please l
           IAC_BUCKET_NAME: my_bucket
           IAC_REGION: region
           VERBOSE: true # not mandatory
-          BRANCH: main # not mandatory
-          OPEN_API_PATH: swagger.yaml # not mandatory
-          DYNAMIC_INPUTS: --key1 value1 --key2 value2
           WORKDIR: ./my-folder # not mandatory
 
       - name: Check Run Tasks Data
@@ -49,16 +46,13 @@ Field | Mandatory | Default Value | Observation
 **CLIENT_REALM** | YES | N/A |[StackSpot](https://stackspot.com/en/settings/access-token) Client Realm.
 **WORKSPACE** | YES | N/A | StackSpot Workspace where the project has been registered.
 **ENVIRONMENT** | YES | N/A | StackSpot Environment where the project will be deployed.
-**VERSION_TAG** | YES | N/A | Deploy version tag
+**VERSION_TAG** | YES | N/A | Rollback intended tag
 **TF_STATE_BUCKET_NAME** | YES | N/A | AWS S3 Bucket name where the generated tfstate files will be stored.
 **TF_STATE_REGION** | YES | N/A | AWS region where the TF State will be stored (e.g: `us-east-1`).
 **IAC_BUCKET_NAME** | YES | N/A | AWS S3 Bucket name where the generated IaC files will be stored.
 **IAC_REGION** | YES | N/A | AWS region where the IaC will be stored (e.g: `us-east-1`).
 **VERBOSE** | NO | `false` | Whether to show extra logs during execution. (e.g: `true`).
 **BRANCH** | NO | N/A | Repository branch to checkout if necessary (e.g: `main`).
-**OPEN_API_PATH** | NO | N/A | Path to OpenAI / Swagger file within the repository (e.g: `path/to/file.yml`)
-**DYNAMIC_INPUTS** | NO | N/A | Dynamic inputs used with Jinja on IAC, informed as `--key1 value1 --key2 value2`
-**WORKDIR** | NO | ./ | Path to the directory where the `.stk` is located.
 
 * * *
 
