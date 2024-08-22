@@ -37,7 +37,7 @@ def build_pipeline_url() -> str:
 
 
 def get_env_id(slug, access_token):
-    workspace_url = "https://workspace-workspace-api.stg.stackspot.com/v1/environments"
+    workspace_url = "https://workspace-workspace-api.v1.stackspot.com/v1/environments"
     deploy_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     env_request = requests.get(
         url=workspace_url, 
