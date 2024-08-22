@@ -35,8 +35,6 @@ def build_pipeline_url() -> str:
     url = f"{GITHUB_SERVER_URL}/{GITHUB_REPOSITORY}/actions/runs/{GITHUB_RUN_ID}"
     return url
 
-
-ACTION_PATH = os.getenv("ACTION_PATH")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_KEY = os.getenv("CLIENT_KEY")
 CLIENT_REALM = os.getenv("CLIENT_REALM")
@@ -48,13 +46,13 @@ VERBOSE = os.getenv("VERBOSE")
 VERSION_TAG = os.getenv("VERSION_TAG")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 
-inputs_list = [ENVIRONMENT, VERSION_TAG, ACTION_PATH, CLIENT_ID, CLIENT_KEY, CLIENT_REALM, TF_STATE_BUCKET_NAME, TF_STATE_REGION, IAC_BUCKET_NAME, IAC_REGION]
+inputs_list = [ENVIRONMENT, VERSION_TAG, CLIENT_ID, CLIENT_KEY, CLIENT_REALM, TF_STATE_BUCKET_NAME, TF_STATE_REGION, IAC_BUCKET_NAME, IAC_REGION]
 
 if None in inputs_list:
     print("- Some mandatory input is empty. Please, check the input list.")
     exit(1)
 
-with open(Path(ACTION_PATH+'/.stk/stk.yaml'), 'r') as file:
+with open(Path('/.stk/stk.yaml'), 'r') as file:
     stk_yaml = file.read()
 
 stk_dict = safe_load(stk_yaml)
