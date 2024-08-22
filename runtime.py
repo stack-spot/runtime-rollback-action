@@ -83,9 +83,14 @@ if r1.status_code == 200:
     
     print("Successfully authenticated!")
 
+    stk_id = {
+        "appId":  app_or_infra_id,
+    } if stk_yaml_type != "infra" else {
+        "infraId": app_or_infra_id,
+    }
+
     request_data = {
-        "appId": app_or_infra_id if stk_yaml_type != "infra" else None,
-        "infraId": app_or_infra_id if stk_yaml_type == "infra" else None,
+        **stk_id,
         "envId": ENVIRONMENT,
         "tag": VERSION_TAG,
         "config": {
