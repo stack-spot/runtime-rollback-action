@@ -52,7 +52,7 @@ if None in inputs_list:
     print("- Some mandatory input is empty. Please, check the input list.")
     exit(1)
 
-with open(Path('/.stk/stk.yaml'), 'r') as file:
+with open(Path('.stk/stk.yaml'), 'r') as file:
     stk_yaml = file.read()
 
 stk_dict = safe_load(stk_yaml)
