@@ -1,6 +1,6 @@
-name: 'Runtime Manager Action'
+name: 'Runtime Rollback Action'
 
-description: 'Runtime Manager Action'
+description: 'Action to perform a Self-Hosted Rollback to a previously deployed tag'
 
 inputs:
   CLIENT_ID:
