@@ -1,0 +1,121 @@
+name: 'Runtime Rollback Action'
+
+description: 'Action to perform a Self-Hosted Rollback to a previously deployed tag'
+
+inputs:
+  CLIENT_ID:
+    description: Account client id
+    required: true
+  CLIENT_KEY:
+    description: Account client secret key
+    required: true
+  CLIENT_REALM:
+    description: Account client realm
+    required: true
+  WORKSPACE:
+    description: Workspace used to deploy
+    required: true
+  ENVIRONMENT:
+    description: Environment used to deploy
+    required: true
+  VERSION_TAG:
+    description: Rollback version version tag
+    required: true
+  TF_STATE_BUCKET_NAME:
+    description: Bucket to save generated tfstate files
+    required: true
+  TF_STATE_REGION:
+    description: Region configuration for tfstate
+    required: true
+  IAC_BUCKET_NAME:
+    description: Bucket to save generated iac files
+    required: true
+  IAC_REGION:
+    description: Region configuration for iac
+    required: true
+  VERBOSE:
+    description: Verbose configuration
+    required: false
+  WORKDIR:
+    description: Path to the directory where the .stk is located.
+    required: false
+    default: "./"
+
+outputs:
+  tasks:
+    description: "RUN TASK LIST"
+    value: ${{ steps.deploy.outputs.tasks }}
+  run_id:
+    description: "RUN ID"
+    value: ${{ steps.deploy.outputs.run_id }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Runner
+      run: echo 🤖 OS runner is $(uname)
+      shell: bash
+      
+    - name: check envs
+      run: |        
+        echo "${{ inputs.TF_STATE_BUCKET_NAME }}"
+        echo "${{ inputs.IAC_REGION }}"
+      shell: bash
+
+    - name: Get os version
+      run: |
+        cat /etc/os-release
+        uname -r
+      shell: bash
+
+    - name: Check glibc version
+      run: |
+        ldd --version
+      shell: bash
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4.7.1
+      with:
+        python-version: '3.10' 
+
+    - name: Install python libraries 
+      run: pip install requests ruamel-yaml==0.17.33
+      shell: bash
+
+    - name: Setup STK CLI
+      run: |
+        curl -fsSL https://stk.stackspot.com/install.sh | bash
+        $HOME/.stk/bin/stk login --client-id=${{ inputs.CLIENT_ID }} --client-key=${{ inputs.CLIENT_KEY }} --realm=${{ inputs.CLIENT_REALM }}
+      shell: bash
+
+    - name: Start Self-Hosted Rollback run with Runtime
+      id: deploy
+      working-directory: ${{ inputs.WORKDIR }}
+      env:
+        CLIENT_ID: ${{ inputs.CLIENT_ID }}
+        CLIENT_KEY: ${{ inputs.CLIENT_KEY }}
+        CLIENT_REALM: ${{ inputs.CLIENT_REALM }}
+        TF_STATE_BUCKET_NAME: ${{ inputs.TF_STATE_BUCKET_NAME }}
+        TF_STATE_REGION: ${{ inputs.TF_STATE_REGION }}
+        IAC_BUCKET_NAME: ${{ inputs.IAC_BUCKET_NAME }}
+        IAC_REGION: ${{ inputs.IAC_REGION }}
+        VERBOSE: ${{ inputs.VERBOSE }}
+        VERSION_TAG: ${{ inputs.VERSION_TAG }}
+        ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+      run: |
+        if [ ${{runner.os}} != 'Windows' ]; then
+          python3 ${{ github.action_path }}/runtime.py
+        elif [ ${{runner.os}} == 'Windows' ]; then
+          python ${{ github.action_path }}\runtime.py
+        else
+          echo "${{runner.os}} not supported"
+          exit 1
+        fi
+      shell: bash
+
+branding:
+    icon: 'terminal'
+    color: 'gray-dark'
