@@ -37,7 +37,7 @@ def build_pipeline_url() -> str:
 
 
 def get_env_id(slug, access_token):
-    workspace_url = "https://workspace-workspace-api.v1.stackspot.com/v1/environments"
+    workspace_url = "https://workspace.stackspot.com/v1/environments"
     deploy_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     env_request = requests.get(
         url=workspace_url, 
@@ -140,14 +140,14 @@ if r1.status_code == 200:
     print("Deploying Self-Hosted Rollback..")
 
     if stk_yaml_type == 'app':
-        self_hosted_rollback_app_url = "https://runtime-manager.v1.stackspot.com/v1/run/self-hosted/rollback/app"
+        self_hosted_rollback_app_url = "https://runtime-manager.stackspot.com/v1/run/self-hosted/rollback/app"
         rollback_request = requests.post(
                 url=self_hosted_rollback_app_url,
                 headers=deploy_headers,
                 data=request_data
             )
     elif stk_yaml_type == 'infra':
-        self_hosted_rollback_infra_url = "https://runtime-manager.v1.stackspot.com/v1/run/self-hosted/rollback/infra"
+        self_hosted_rollback_infra_url = "https://runtime-manager.stackspot.com/v1/run/self-hosted/rollback/infra"
         rollback_request = requests.post(
                 url=self_hosted_rollback_infra_url,
                 headers=deploy_headers,
