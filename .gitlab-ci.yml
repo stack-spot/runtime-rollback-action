@@ -1,0 +1,43 @@
+stages:
+  - rollback
+
+variables:
+  CLIENT_ID: $CLIENT_ID
+  CLIENT_KEY: $CLIENT_KEY
+  CLIENT_REALM: $CLIENT_REALM
+  WORKSPACE: $WORKSPACE
+  ENVIRONMENT: $ENVIRONMENT
+  VERSION_TAG: $VERSION_TAG
+  TF_STATE_BUCKET_NAME: $TF_STATE_BUCKET_NAME
+  TF_STATE_REGION: $TF_STATE_REGION
+  IAC_BUCKET_NAME: $IAC_BUCKET_NAME
+  IAC_REGION: $IAC_REGION
+  VERBOSE: $VERBOSE
+  WORKDIR: $WORKDIR
+
+rollback_job:
+  stage: rollback
+  image: python:3.10
+  script:
+    - echo "🤖 OS runner is $(uname)"
+    - echo "${TF_STATE_BUCKET_NAME}"
+    - echo "${IAC_REGION}"
+    - cat /etc/os-release
+    - uname -r
+    - ldd --version
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://stk.stackspot.com/install.sh | bash
+    - $HOME/.stk/bin/stk login --client-id=$CLIENT_ID --client-key=$CLIENT_KEY --realm=$CLIENT_REALM
+    - pip install requests ruamel-yaml==0.17.33
+    - |
+      if [ $CI_RUNNER_OS != 'Windows' ]; then
+        python3 runtime.py
+      elif [ $CI_RUNNER_OS == 'Windows' ]; then
+        python runtime.py
+      else
+        echo "$CI_RUNNER_OS not supported"
+        exit 1
+      fi
+  artifacts:
+    paths:
+      - $WORKDIR
