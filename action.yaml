@@ -132,7 +132,6 @@ runs:
         STACKSPOT_IAM_URL: ${{ steps.stackspot-url.outputs.iam }}
         STACKSPOT_WORKSPACE_URL: ${{ steps.stackspot-url.outputs.workspace }}
         STACKSPOT_RUNTIME_MANAGER_URL: ${{ steps.stackspot-url.outputs.runtime_manager }}
-        STACKSPOT_WORKSPACE_URL
       run: |
         if [ ${{runner.os}} != 'Windows' ]; then
           python3 ${{ github.action_path }}/runtime.py
