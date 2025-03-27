@@ -40,6 +40,11 @@ inputs:
     description: Path to the directory where the .stk is located.
     required: false
     default: "./"
+  BETA_ENVIRONMENT:
+    description: Environment in which rollback will be executed. (default, stg, dev).
+    required: false
+    type: string
+    default: default
 
 outputs:
   tasks:
@@ -85,11 +90,26 @@ runs:
       run: pip install requests ruamel-yaml==0.17.33
       shell: bash
 
-    - name: Setup STK CLI
+    - name: Define Domains
+      id: stackspot-url
       run: |
-        curl -fsSL https://stk.stackspot.com/install.sh | bash
-        $HOME/.stk/bin/stk login --client-id=${{ inputs.CLIENT_ID }} --client-key=${{ inputs.CLIENT_KEY }} --realm=${{ inputs.CLIENT_REALM }}
+        if [ "${{ inputs.BETA_CLI_ENVIRONMENT }}" == "stg" ]; then
+          STACKSPOT_IAM_URL="https://iam-auth-ssr.stg.stackspot.com"
+          STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.stg.stackspot.com"
+
+        elif [ "${{ inputs.BETA_CLI_ENVIRONMENT }}" == "dev" ]; then
+          STACKSPOT_IAM_URL="https://iam-auth-ssr.dev.stackspot.com"
+          STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.dev.stackspot.com"
+
+        else
+          STACKSPOT_IAM_URL="https://auth.stackspot.com"
+          STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.stackspot.com"
+        fi
+
+        echo "iam=$STACKSPOT_IAM_URL" >> "$GITHUB_OUTPUT"
+        echo "runtime_manager=$STACKSPOT_RUNTIME_MANAGER_URL" >> "$GITHUB_OUTPUT"
       shell: bash
+
 
     - name: Start Self-Hosted Rollback run with Runtime
       id: deploy
@@ -105,6 +125,8 @@ runs:
         VERBOSE: ${{ inputs.VERBOSE }}
         VERSION_TAG: ${{ inputs.VERSION_TAG }}
         ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
+        STACKSPOT_IAM_URL: ${{ steps.stackspot-url.outputs.iam }}
+        STACKSPOT_RUNTIME_MANAGER_URL: ${{ steps.stackspot-url.outputs.runtime_manager }}
       run: |
         if [ ${{runner.os}} != 'Windows' ]; then
           python3 ${{ github.action_path }}/runtime.py
