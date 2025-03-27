@@ -150,7 +150,7 @@ if r1.status_code == 200:
                 data=request_data
             )
     elif stk_yaml_type == 'infra':
-        self_hosted_rollback_infra_url = f"{STACKSPOT_RUNTIME_MANAGER_URL}/run/self-hosted/rollback/infra"
+        self_hosted_rollback_infra_url = f"{STACKSPOT_RUNTIME_MANAGER_URL}/v1/run/self-hosted/rollback/infra"
         rollback_request = requests.post(
                 url=self_hosted_rollback_infra_url,
                 headers=deploy_headers,
