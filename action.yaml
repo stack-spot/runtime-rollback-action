@@ -93,11 +93,11 @@ runs:
     - name: Define Domains
       id: stackspot-url
       run: |
-        if [ "${{ inputs.BETA_CLI_ENVIRONMENT }}" == "stg" ]; then
+        if [ "${{ inputs.BETA_ENVIRONMENT }}" == "stg" ]; then
           STACKSPOT_IAM_URL="https://iam-auth-ssr.stg.stackspot.com"
           STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.stg.stackspot.com"
 
-        elif [ "${{ inputs.BETA_CLI_ENVIRONMENT }}" == "dev" ]; then
+        elif [ "${{ inputs.BETA_ENVIRONMENT }}" == "dev" ]; then
           STACKSPOT_IAM_URL="https://iam-auth-ssr.dev.stackspot.com"
           STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.dev.stackspot.com"
 
