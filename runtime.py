@@ -36,8 +36,8 @@ def build_pipeline_url() -> str:
     return url
 
 
-def get_env_id(slug, access_token):
-    workspace_url = "https://workspace.stackspot.com/v1/environments"
+def get_env_id(slug, access_token, workspace_url):
+    workspace_url = f"{workspace_url}/v1/environments"
     deploy_headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     env_request = requests.get(
         url=workspace_url, 
@@ -72,6 +72,7 @@ VERSION_TAG = os.getenv("VERSION_TAG")
 ENVIRONMENT = os.getenv("ENVIRONMENT")
 STACKSPOT_IAM_URL = os.getenv("STACKSPOT_IAM_URL")
 STACKSPOT_RUNTIME_MANAGER_URL = os.getenv("STACKSPOT_RUNTIME_MANAGER_URL")
+STACKSPOT_WORKSPACE_URL = os.getenv("STACKSPOT_WORKSPACE_URL")
 
 inputs_list = [ENVIRONMENT, VERSION_TAG, CLIENT_ID, CLIENT_KEY, CLIENT_REALM, TF_STATE_BUCKET_NAME, TF_STATE_REGION, IAC_BUCKET_NAME, IAC_REGION]
 
@@ -117,7 +118,7 @@ if r1.status_code == 200:
 
     request_data = {
         **stk_id,
-        "envId": get_env_id(ENVIRONMENT, access_token),
+        "envId": get_env_id(ENVIRONMENT, access_token, STACKSPOT_WORKSPACE_URL),
         "tag": VERSION_TAG,
         "config": {
             "tfstate": {

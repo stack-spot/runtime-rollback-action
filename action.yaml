@@ -96,17 +96,21 @@ runs:
         if [ "${{ inputs.BETA_ENVIRONMENT }}" == "stg" ]; then
           STACKSPOT_IAM_URL="https://iam-auth-ssr.stg.stackspot.com"
           STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.stg.stackspot.com"
+          STACKSPOT_WORKSPACE_URL="https://workspace-workspace-api.stg.stackspot.com"
 
         elif [ "${{ inputs.BETA_ENVIRONMENT }}" == "dev" ]; then
           STACKSPOT_IAM_URL="https://iam-auth-ssr.dev.stackspot.com"
           STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.dev.stackspot.com"
+          STACKSPOT_WORKSPACE_URL="https://workspace-workspace-api.dev.stackspot.com"
 
         else
           STACKSPOT_IAM_URL="https://auth.stackspot.com"
           STACKSPOT_RUNTIME_MANAGER_URL="https://runtime-manager.stackspot.com"
+          STACKSPOT_WORKSPACE_URL="https://workspace.stackspot.com"
         fi
 
         echo "iam=$STACKSPOT_IAM_URL" >> "$GITHUB_OUTPUT"
+        echo "workspace=$STACKSPOT_WORKSPACE_URL" >> "$GITHUB_OUTPUT"
         echo "runtime_manager=$STACKSPOT_RUNTIME_MANAGER_URL" >> "$GITHUB_OUTPUT"
       shell: bash
 
@@ -126,7 +130,9 @@ runs:
         VERSION_TAG: ${{ inputs.VERSION_TAG }}
         ENVIRONMENT: ${{ inputs.ENVIRONMENT }}
         STACKSPOT_IAM_URL: ${{ steps.stackspot-url.outputs.iam }}
+        STACKSPOT_WORKSPACE_URL: ${{ steps.stackspot-url.outputs.workspace }}
         STACKSPOT_RUNTIME_MANAGER_URL: ${{ steps.stackspot-url.outputs.runtime_manager }}
+        STACKSPOT_WORKSPACE_URL
       run: |
         if [ ${{runner.os}} != 'Windows' ]; then
           python3 ${{ github.action_path }}/runtime.py
